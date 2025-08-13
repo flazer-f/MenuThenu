@@ -1,8 +1,8 @@
-import React from 'react'
-import { StrictMode } from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import App from './App.jsx'
+import CreateMenu from './components/createmenu/CreateMenu'
+import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
