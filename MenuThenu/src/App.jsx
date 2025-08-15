@@ -6,8 +6,6 @@ import Dashboard from './components/dashboard/AdminDashboard'
 
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <Dashboard/>
@@ -15,4 +13,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
