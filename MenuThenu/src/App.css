@@ -114,6 +114,12 @@ body {
   min-width: 250px;
   max-width: 300px;
   text-align: center;
+#root {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left; /* Optional: aligns content to the left */
 }
 
 .feature-card img {
