@@ -1,16 +1,14 @@
-import React, { useState } from 'react'
-
-import './App.css'
-import MenuCreator from './components/createmenu/MenuCreator'
-import Dashboard from './components/dashboard/AdminDashboard'
-
+import React from 'react';
+import './App.css';
+import Routes from './Routes';
+// import Navbar from './components/Navbar';
 
 function App() {
   return (
     <>
-      <Dashboard/>
+      <Routes />
     </>
-  )
+  );
 }
 
 export default App;
