@@ -1,12 +1,14 @@
-import React from "react";
-import "./App.css";
-import HomePage from "./components/homepage/homepage";
+import React from 'react';
+import './App.css';
+import Routes from './Routes';
+// import Navbar from './components/Navbar';
 
-export default function App() {
+function App() {
   return (
-    <div>
-      
-      <HomePage />
-    </div>
+    <>
+      <Routes />
+    </>
   );
 }
+
+export default App;
