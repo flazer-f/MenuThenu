@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const navItems = [
-    { name: "Dashboard", path: "/" },
-    { name: "Menus", path: "/menus" },
+    { name: "Dashboard", path: "/admin/dashboard" },
+    { name: "Menus", path: "/admin/menulist" },
     { name: "Analytics", path: "/analytics" },
     { name: "Settings", path: "/settings" },
     { name: "Help", path: "/help" },
