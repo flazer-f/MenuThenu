@@ -1,19 +1,17 @@
 import React from "react";
 import "./Hero.css";
+import Carousel from "./Carousel";
 
 export default function Hero() {
   return (
     <>
       {/* Hero */}
       <section className="hero">
-        <img
-          src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5"
-          alt="Restaurant tablet menu"
-        />
+        <Carousel />
         <div className="hero-overlay">
           <h1>Transform Your Restaurant with Interactive Digital Menus</h1>
           <p>
-            MenuGenius offers a comprehensive suite of tools to streamline your
+            MenuThenu offers a comprehensive suite of tools to streamline your
             menu management, customize layouts, and update in real-time.
           </p>
           <a href="#get-started" className="btn-primary">Get Started</a>
