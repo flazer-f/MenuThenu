@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const MenuList = () => {
-  // Dummy static menu items
-  const [menu, setMenu] = useState([
-    { _id: "1", name: "Pizza", price: 250 },
-    { _id: "2", name: "Burger", price: 150 },
-    { _id: "3", name: "Pasta", price: 200 },
-  ]);
-
+  const [menu, setMenu] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({ name: "", price: "" });
+
+  // Fetch menu items from backend on component mount
+  useEffect(() => {
+    fetch("/api/menu")
+      .then((res) => res.json())
+      .then((data) => setMenu(data))
+      .catch((err) => console.error("Failed to fetch menu:", err));
+  }, []);
 
   // Handle edit button click
   const handleEditClick = (item) => {
@@ -23,9 +25,19 @@ const MenuList = () => {
   };
 
   // Save changes (just updates local state for now)
-  const handleSave = (id) => {
-    setMenu(menu.map((item) => (item._id === id ? { ...item, ...formData } : item)));
-    setEditingItem(null);
+  const handleSave = async (id) => {
+    try {
+      const res = await fetch(`/api/menu/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const updatedItem = await res.json();
+      setMenu(menu.map((item) => (item._id === id ? updatedItem : item)));
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Failed to update menu item:", err);
+    }
   };
 
   return (
