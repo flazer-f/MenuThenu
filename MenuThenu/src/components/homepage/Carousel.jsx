@@ -3,9 +3,9 @@ import "./Carousel.css";
 
 const Carousel = () => {
   const images = [
-    "https://picsum.photos/id/1018/1200/500",
-    "https://picsum.photos/id/1015/1200/500",
-    "https://picsum.photos/id/1019/1200/500",
+    "src/assets/c1.webp",
+    "src/assets/c2.webp",
+    "src/assets/c6.webp",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
