@@ -2,8 +2,12 @@
 import React,{ useState } from 'react';
 import ClassicDiner from './menutemplates/ClassicDiner';
 import ModernBistro from './menutemplates/ModernBistro';
-// import CozyCafe from './templates/CozyCafe';
-// import FamilyRestaurant from './templates/FamilyRestaurant';
+import MinimalistEatery from './menutemplates/MinimalistEatery';
+import DarkModeBistro from './menutemplates/DarkModeBistro';
+import GridGallery from './menutemplates/GridGallery';
+import CardDeck from './menutemplates/CardDeck';
+import FunkyVibes from './menutemplates/FunkyVibes';
+import NeonGlow from './menutemplates/NeonGlow';
 
 const templates = {
   'Classic Diner': {
@@ -24,7 +28,60 @@ const templates = {
       secondaryText: '#777'
     }
   },
-  // Add similar entries for CozyCafe and FamilyRestaurant
+  'Minimalist Eatery': {
+    component: MinimalistEatery,
+    defaultColors: {
+      background: '#ffffff',
+      text: '#222222',
+      accent: '#444444',
+      secondaryText: '#666666'
+    }
+  },
+  'Dark Mode Bistro': {
+    component: DarkModeBistro,
+    defaultColors: {
+      background: '#121212',
+      text: '#ffffff',
+      accent: '#bb86fc',
+      secondaryText: '#b0b0b0'
+    }
+  },
+  'Grid Gallery': {
+    component: GridGallery,
+    defaultColors: {
+      background: '#f8f9fa',
+      text: '#212529',
+      accent: '#007bff',
+      secondaryText: '#6c757d'
+    }
+  },
+  'Card Deck': {
+    component: CardDeck,
+    defaultColors: {
+      background: '#ffffff',
+      text: '#333333',
+      accent: '#ff6b6b',
+      secondaryText: '#666666'
+    }
+  },
+  'Funky Vibes': {
+    component: FunkyVibes,
+    defaultColors: {
+      background: '#8A2BE2', // Deep purple
+      text: '#FFFFFF',
+      accent: '#FF1493', // Deep pink
+      secondaryText: '#FFA500' // Orange
+    }
+  },
+  'Neon Glow': {
+    component: NeonGlow,
+    defaultColors: {
+      background: '#0D0D0D', // Almost black
+      text: '#FFFFFF',
+      accent: '#FF00FF', // Magenta
+      secondaryText: '#00FFFF' // Cyan
+    }
+  }
 };
 
 const TemplateManager = ({ 
@@ -46,6 +103,7 @@ const TemplateManager = ({
       items={menuData.items}
       font={designOptions.font}
       color={designOptions.color}
+      backgroundImage={designOptions.backgroundImage}
     />
   );
 };

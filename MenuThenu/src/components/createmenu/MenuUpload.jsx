@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import FileUploader from './FileUploader';
+import ImageUploader from '../common/ImageUploader';
 
 const MenuUpload = ({ menuData, setMenuData }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,7 +10,8 @@ const MenuUpload = ({ menuData, setMenuData }) => {
     price: '',
     description: '',
     category: '',
-    isVegetarian: false
+    isVegetarian: false,
+    image: ''
   });
 
   const handleDataExtracted = (extractedItems) => {
@@ -45,7 +47,8 @@ const MenuUpload = ({ menuData, setMenuData }) => {
       price: '',
       description: '',
       category: '',
-      isVegetarian: false
+      isVegetarian: false,
+      image: ''
     });
   };
 
@@ -67,6 +70,25 @@ const MenuUpload = ({ menuData, setMenuData }) => {
     setMenuData({
       ...menuData,
       items: updatedItems
+    });
+  };
+
+  const handleItemImageUpload = (index, imageUrl) => {
+    const updatedItems = [...menuData.items];
+    updatedItems[index] = {
+      ...updatedItems[index],
+      image: imageUrl
+    };
+    setMenuData({
+      ...menuData,
+      items: updatedItems
+    });
+  };
+
+  const handleNewItemImageUpload = (imageUrl) => {
+    setNewItem({
+      ...newItem,
+      image: imageUrl
     });
   };
 
@@ -102,8 +124,14 @@ const MenuUpload = ({ menuData, setMenuData }) => {
         {/* Add new item form */}
         <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-4">
           <h4 className="text-sm font-medium text-gray-700 mb-3">Add New Item</h4>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
             <div>
+              <ImageUploader
+                initialImage={newItem.image}
+                onImageUpload={handleNewItemImageUpload}
+                className="mb-2"
+              />
               <input
                 type="text"
                 placeholder="Item name"
@@ -112,44 +140,41 @@ const MenuUpload = ({ menuData, setMenuData }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
               />
             </div>
-            <div>
+            <div className="flex flex-col justify-between">
               <input
                 type="number"
+                step="0.01"
                 placeholder="Price"
                 value={newItem.price}
                 onChange={e => setNewItem({...newItem, price: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
               />
-            </div>
-          </div>
-          <div className="mb-2">
-            <input
-              type="text"
-              placeholder="Description (optional)"
-              value={newItem.description}
-              onChange={e => setNewItem({...newItem, description: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-            <div>
               <input
                 type="text"
-                placeholder="Category (optional)"
-                value={newItem.category}
-                onChange={e => setNewItem({...newItem, category: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                placeholder="Description (optional)"
+                value={newItem.description}
+                onChange={e => setNewItem({...newItem, description: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
               />
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="isVegetarian"
-                checked={newItem.isVegetarian}
-                onChange={e => setNewItem({...newItem, isVegetarian: e.target.checked})}
-                className="mr-2"
-              />
-              <label htmlFor="isVegetarian" className="text-sm text-gray-700">Vegetarian</label>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Category (optional)"
+                  value={newItem.category}
+                  onChange={e => setNewItem({...newItem, category: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+                <div className="flex items-center bg-white px-3 py-2 border border-gray-300 rounded-md">
+                  <input
+                    type="checkbox"
+                    id="isVegetarian"
+                    checked={newItem.isVegetarian}
+                    onChange={e => setNewItem({...newItem, isVegetarian: e.target.checked})}
+                    className="mr-2"
+                  />
+                  <label htmlFor="isVegetarian" className="text-sm text-gray-700">Vegetarian</label>
+                </div>
+              </div>
             </div>
           </div>
           <button
@@ -173,6 +198,9 @@ const MenuUpload = ({ menuData, setMenuData }) => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Item
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -193,13 +221,20 @@ const MenuUpload = ({ menuData, setMenuData }) => {
                   {menuData.items.map((item, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">
+                        <ImageUploader
+                          initialImage={item.image}
+                          onImageUpload={(url) => handleItemImageUpload(index, url)}
+                          className="w-16 h-16"
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{item.name}</div>
                         {item.description && (
                           <div className="text-xs text-gray-500">{item.description}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">${item.price.toFixed(2)}</div>
+                        <div className="text-sm text-gray-900">${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{item.category || 'N/A'}</div>

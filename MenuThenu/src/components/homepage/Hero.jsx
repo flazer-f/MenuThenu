@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Hero.css";
 import Carousel from "./Carousel";
 
@@ -14,7 +15,7 @@ export default function Hero() {
             MenuThenu offers a comprehensive suite of tools to streamline your
             menu management, customize layouts, and update in real-time.
           </p>
-          <a href="#get-started" className="btn-primary">Get Started</a>
+          <Link to="/MenuCreator" className="btn-primary">Get Started</Link>
         </div>
       </section>
 
@@ -88,7 +89,7 @@ export default function Hero() {
           Contact us today to schedule a demo and see how MenuGenius can
           transform your restaurant.
         </p>
-        <a href="#demo" className="btn-primary">Request a Demo</a>
+        <Link to="/MenuCreator" className="btn-primary">Request a Demo</Link>
       </section>
     </>
   );

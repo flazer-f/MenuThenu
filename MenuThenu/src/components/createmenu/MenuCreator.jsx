@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import TemplateSelection from './TemplateSelection';
 import MenuUpload from './MenuUpload';
 import MenuPreview from './MenuPreview';
+import BackgroundSettings from './BackgroundSettings';
 
 const MenuCreator = () => {
   const navigate = useNavigate();
@@ -21,6 +22,11 @@ const MenuCreator = () => {
       text: '#000000',
       accent: '#3b82f6',
       secondaryText: '#666666'
+    },
+    backgroundImage: {
+      url: '',
+      display: 'none',
+      opacity: 1
     }
   });
   
@@ -295,6 +301,12 @@ const MenuCreator = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Background Image Settings */}
+              <BackgroundSettings 
+                designOptions={designOptions}
+                setDesignOptions={setDesignOptions}
+              />
             </div>
             
             <div className="lg:col-span-2">
