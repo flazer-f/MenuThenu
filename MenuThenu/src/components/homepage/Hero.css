@@ -20,6 +20,9 @@
   text-align: center;
   color: white;
   padding: 0 15px;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.8),   /* stronger bottom shadow */
+    0 0 6px rgba(0, 0, 0, 0.6);     /* subtle outer glow */
 }
 
 .hero-overlay h1 {
