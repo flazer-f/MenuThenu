@@ -986,9 +986,10 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // ******Error  in this part*******
 // For client-side routing, send back the index.html for any other routes 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 
 // Start server
 app.listen(PORT, () => {
