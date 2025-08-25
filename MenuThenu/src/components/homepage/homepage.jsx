@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <Hero />
+      <Hero />/*coursel inside */
       <Footer />
     </>
   );

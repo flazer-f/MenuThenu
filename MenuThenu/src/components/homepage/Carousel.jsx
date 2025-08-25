@@ -4,7 +4,7 @@ import "./Carousel.css";
 const Carousel = () => {
   const images = [
     "src/assets/c1.webp",
-    "src/assets/c2.webp",
+    "src/assets/c4.webp",
     "src/assets/c6.webp",
   ];
 
