@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+ const upload = multer({ storage: storage });
 
 // Middleware
 app.use(cors({
@@ -966,13 +966,29 @@ app.get('/api/menus/:id/render', async (req, res) => {
   }
 });
 
+// List all menus
+app.get('/api/menus', async (req, res) => {
+  try {
+    const menus = await Menu.find();
+    res.json(menus);
+  } catch (err) {
+    console.error('Error fetching menus:', err);
+    res.status(500).json({ error: 'Failed to fetch menus' });
+  }
+});
+
+// Test endpoint
+app.get('/test', (req, res) => res.send('ok'));
+
 // Serve static files - make sure this comes AFTER the subdomain route handler
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// For client-side routing, send back the index.html for any other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+
+// ******Error  in this part*******
+// For client-side routing, send back the index.html for any other routes 
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 // Start server
 app.listen(PORT, () => {
