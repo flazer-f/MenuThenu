@@ -1,7 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import Header from "./Header";
+import Hero from "./Hero";
+import Footer from "./Footer";
 
-// HomePage now just acts as a container for the content being rendered by the router
+
 export default function HomePage() {
-  return <Outlet />;
+  return (
+    <>
+      <Header />
+      <Hero />
+      <Footer />
+    </>
+  );
 }
