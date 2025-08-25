@@ -6,7 +6,7 @@ const TemplateSelection = ({ selectedTemplate, onSelectTemplate }) => {
     {
       id: 1,
       name: 'Classic Diner',
-      description: 'A timeless design for traditional exercise.',
+      description: 'A timeless design for traditional restaurants.',
       image: '/templates/classic-diner.png'
     },
     {
@@ -17,15 +17,39 @@ const TemplateSelection = ({ selectedTemplate, onSelectTemplate }) => {
     },
     {
       id: 3,
-      name: 'Cozy Cafe',
-      description: 'Warm and inviting for coffee shops and cafes.',
-      image: '/templates/cozy-cafe.png'
+      name: 'Minimalist Eatery',
+      description: 'Clean, elegant design with emphasis on typography.',
+      image: '/templates/minimalist-eatery.png'
     },
     {
       id: 4,
-      name: 'Family Restaurant',
-      description: 'Fun and colorful for family-friendly restaurants.',
-      image: '/templates/family-restaurant.png'
+      name: 'Dark Mode Bistro',
+      description: 'Sleek dark theme perfect for evening dining and bars.',
+      image: '/templates/dark-mode-bistro.png'
+    },
+    {
+      id: 5,
+      name: 'Grid Gallery',
+      description: 'Modern grid layout with visual emphasis on each dish.',
+      image: '/templates/grid-gallery.png'
+    },
+    {
+      id: 6,
+      name: 'Card Deck',
+      description: 'Playful card-based design for casual restaurants.',
+      image: '/templates/card-deck.png'
+    },
+    {
+      id: 7,
+      name: 'Funky Vibes',
+      description: 'Bold, colorful design with funky elements for a vibrant atmosphere.',
+      image: '/templates/funky-vibes.png'
+    },
+    {
+      id: 8,
+      name: 'Neon Glow',
+      description: 'Glowing neon effect perfect for night venues and modern eateries.',
+      image: '/templates/neon-glow.png'
     }
   ];
 
@@ -51,9 +75,9 @@ const TemplateSelection = ({ selectedTemplate, onSelectTemplate }) => {
               )}
             </div>
             <h3 className="text-xl font-semibold mb-2">{template.name}</h3>
-            <p className="text-gray-600 mb-4">{template.description}</p>
+            <p className="text-gray-600 mb-4 text-sm">{template.description}</p>
             <button 
-              className={`px-4 py-2 rounded-md ${
+              className={`px-4 py-2 rounded-md w-full ${
                 selectedTemplate?.id === template.id 
                   ? 'bg-blue-600 text-white' 
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'

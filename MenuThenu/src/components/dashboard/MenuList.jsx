@@ -7,7 +7,7 @@ const MenuList = () => {
 
   // Fetch menu items from backend on component mount
   useEffect(() => {
-    fetch("/api/menu")
+    fetch("/api/menus")
       .then((res) => res.json())
       .then((data) => setMenu(data))
       .catch((err) => console.error("Failed to fetch menu:", err));
@@ -27,7 +27,7 @@ const MenuList = () => {
   // Save changes (just updates local state for now)
   const handleSave = async (id) => {
     try {
-      const res = await fetch(`/api/menu/${id}`, {
+      const res = await fetch(`/api/menus/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
