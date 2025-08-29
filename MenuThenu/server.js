@@ -983,13 +983,53 @@ app.get('/test', (req, res) => res.send('ok'));
 // Serve static files - make sure this comes AFTER the subdomain route handler
 app.use(express.static(path.join(__dirname, 'dist')));
 
-
-// ******Error  in this part*******
-// For client-side routing, send back the index.html for any other routes 
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// Get a specific menu with its items
+app.get('/api/menus/:id', async (req, res) => {
+  try {
+    const menu = await Menu.findById(req.params.id);
+    if (!menu) {
+      return res.status(404).json({ error: 'Menu not found' });
+    }
+    
+    const MenuItems = getMenuItemsModel(menu.collectionName);
+    const items = await MenuItems.find();
+    res.json({ menu, items });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve menu' });
+  }
 });
 
+// Fix the catch-all route handler - this was causing issues
+app.get('*', (req, res) => {
+  // If no subdomain or it's 'www', serve the main application
+  if (!req.subdomain || req.subdomain === 'www') {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  } else {
+    // For unknown routes with subdomain, try to find the menu
+    Menu.findOne({ subdomain: req.subdomain, isPublished: true })
+      .then(menu => {
+        if (menu) {
+          // Get the menu items
+          const MenuItems = getMenuItemsModel(menu.collectionName);
+          return MenuItems.find().then(items => ({ menu, items }));
+        }
+        return { menu: null, items: [] };
+      })
+      .then(({ menu, items }) => {
+        if (menu) {
+          // Generate HTML for the menu
+          const html = generateMenuHtml(menu, items);
+          res.send(html);
+        } else {
+          res.status(404).send('Menu not found');
+        }
+      })
+      .catch(err => {
+        console.error('Error serving subdomain:', err);
+        res.status(500).send('Error loading menu');
+      });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {

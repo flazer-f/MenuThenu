@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Get the path to redirect to after login or default to home
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     setFormData({
@@ -45,8 +49,8 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       
-      // Redirect to menu creator
-      navigate('/MenuCreator');
+      // Redirect to the original intended destination
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {
@@ -57,7 +61,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Log In to Your Account</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Log In to MenuThenu</h2>
         
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
