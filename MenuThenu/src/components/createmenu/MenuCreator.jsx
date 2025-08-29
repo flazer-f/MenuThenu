@@ -1,10 +1,12 @@
 // pages/MenuCreator.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TemplateSelection from './TemplateSelection';
 import MenuUpload from './MenuUpload';
 import MenuPreview from './MenuPreview';
 import BackgroundSettings from './BackgroundSettings';
+import QRCode from 'qrcode.react';
+import html2canvas from 'html2canvas';
 
 const MenuCreator = () => {
   const navigate = useNavigate();
@@ -35,6 +37,11 @@ const MenuCreator = () => {
     error: null,
     success: false
   });
+
+  const [savedMenuId, setSavedMenuId] = useState(null);
+  const [subdomain, setSubdomain] = useState('');
+  const [showQRModal, setShowQRModal] = useState(false);
+  const qrCodeRef = useRef(null);
 
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
@@ -102,10 +109,24 @@ const MenuCreator = () => {
     try {
       setSaveStatus({ loading: true, error: null, success: false });
       
-      // First, create the menu
+      // Get authentication token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setSaveStatus({ 
+          loading: false, 
+          error: 'You must be logged in to save a menu. Please log in and try again.', 
+          success: false 
+        });
+        return;
+      }
+      
+      // First, create the menu with authentication
       const menuResponse = await fetch('/api/menus', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           name: menuData.name,
           template: selectedTemplate.name,
@@ -114,15 +135,24 @@ const MenuCreator = () => {
       });
       
       if (!menuResponse.ok) {
-        throw new Error('Failed to save menu');
+        const errorData = await menuResponse.json();
+        throw new Error(errorData.error || 'Failed to save menu');
       }
       
       const savedMenu = await menuResponse.json();
+      setSavedMenuId(savedMenu._id);
+      
+      if (savedMenu.subdomain) {
+        setSubdomain(savedMenu.subdomain);
+      }
       
       // Then, add the menu items
       const itemsResponse = await fetch(`/api/menus/${savedMenu._id}/items`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ items: menuData.items })
       });
       
@@ -130,12 +160,27 @@ const MenuCreator = () => {
         throw new Error('Failed to save menu items');
       }
       
+      // Publish the menu
+      const publishResponse = await fetch(`/api/menus/${savedMenu._id}/publish`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ isPublished: true })
+      });
+      
+      if (!publishResponse.ok) {
+        throw new Error('Failed to publish menu');
+      }
+      
+      const publishedMenu = await publishResponse.json();
+      setSubdomain(publishedMenu.subdomain);
+      
       setSaveStatus({ loading: false, error: null, success: true });
       
-      // Redirect to menu list after 2 seconds
-      setTimeout(() => {
-        navigate('/admin/menulist');
-      }, 2000);
+      // Show QR code modal
+      setShowQRModal(true);
       
     } catch (error) {
       setSaveStatus({ 
@@ -144,6 +189,144 @@ const MenuCreator = () => {
         success: false 
       });
     }
+  };
+
+  const handlePrintQRCode = async () => {
+    if (!qrCodeRef.current) return;
+    
+    try {
+      const canvas = await html2canvas(qrCodeRef.current);
+      const imgData = canvas.toDataURL('image/png');
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Menu QR Code - ${menuData.name}</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+              }
+              .container {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+              }
+              h2 {
+                color: #333;
+              }
+              .instructions {
+                font-size: 12px;
+                color: #777;
+                margin-top: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h2>${menuData.name} Menu</h2>
+              <div>
+                <img src="${imgData}" alt="QR Code" style="max-width: 300px;" />
+              </div>
+              <p style="margin-top: 15px;">
+                Scan this QR code to view our digital menu
+              </p>
+              <p style="color: #666; font-size: 14px;">
+                URL: http://${subdomain}.menuthenu.com
+              </p>
+            </div>
+            <script>
+              window.onload = function() { window.print(); }
+            </script>
+          </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+    } catch (err) {
+      console.error('Error printing QR code:', err);
+    }
+  };
+
+  // QR Code Modal Component
+  const QRCodeModal = () => {
+    if (!showQRModal) return null;
+    
+    const menuUrl = `http://${subdomain}.menuthenu.com`;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Menu Published!</h3>
+            <button 
+              onClick={() => setShowQRModal(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div className="text-center mb-4">
+            <p className="text-gray-600 mb-4">
+              Your menu is now published and accessible at:
+            </p>
+            <a 
+              href={menuUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline break-all"
+            >
+              {menuUrl}
+            </a>
+          </div>
+          
+          <div ref={qrCodeRef} className="flex justify-center my-6 p-4 bg-white">
+            <QRCode 
+              value={menuUrl} 
+              size={200}
+              level="H"
+              includeMargin={true}
+              renderAs="canvas"
+            />
+          </div>
+          
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-500">
+              Share this QR code with your customers to provide easy access to your digital menu
+            </p>
+          </div>
+          
+          <div className="flex justify-between">
+            <button
+              onClick={handlePrintQRCode}
+              className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+              </svg>
+              Print QR Code
+            </button>
+            
+            <button
+              onClick={() => {
+                setShowQRModal(false);
+                navigate('/admin/menulist');
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Go to Menu List
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -327,7 +510,7 @@ const MenuCreator = () => {
           
           {saveStatus.success && (
             <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
-              <p>Menu saved successfully! Redirecting to menu list...</p>
+              <p>Menu saved and published successfully!</p>
             </div>
           )}
           
@@ -352,6 +535,9 @@ const MenuCreator = () => {
           </div>
         </div>
       )}
+      
+      {/* QR Code Modal */}
+      <QRCodeModal />
     </div>
   );
 };
